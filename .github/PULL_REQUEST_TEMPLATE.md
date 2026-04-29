@@ -1,7 +1,7 @@
 <!-- 
 Thanks for contributing a pull request! Please ensure that
 your PR conforms to our contributor guide.
-https://github.com/dwavesystems/dwave-ocean-sdk/blob/master/CONTRIBUTING.rst
+https://github.com/dwavesystems/dwave-optimization/blob/main/CONTRIBUTING.rst
 -->
 
 #### Reference issue
