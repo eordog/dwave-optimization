@@ -270,7 +270,8 @@ cdef class States:
         This method is intended for use by developers of the Ocean SDK.
 
         Args:
-            future: :class:`~dwave.cloud.computation.Future` object.
+            future: A :ref:`future <asyncio-futures>` object such as a
+                :class:`~dwave.cloud.computation.Future` object.
 
             result_hook: Method executed to retrieve the Future.
 
@@ -320,7 +321,6 @@ cdef class States:
                 latest version.
 
         Examples:
-
             This example creates a simple model, sets two states, and then saves
             those states to a
             `buffered I/O <https://docs.python.org/3/library/io.html#binary-i-o>`_

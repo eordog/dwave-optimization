@@ -28,6 +28,8 @@ __all__ = ["expression"]
 class Expression:
     """An expression that can be used as an input to other symbols.
 
+    Instantiated through the :func:`.expression` function.
+
     Examples:
         This example creates expression :math:`v_0 + 2*(v_1 + 1)` and uses it
         for an :class:`.AccumulateZip` symbol that calculates the cumulative
