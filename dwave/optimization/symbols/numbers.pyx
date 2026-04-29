@@ -51,15 +51,15 @@ cdef NumberNode.SumConstraint.Operator _parse_python_operator(str op) except *:
 # Convert the user-defined sum constraints for NumberNode into the 
 # corresponding C++ objects passed to NumberNode.
 cdef vector[NumberNode.SumConstraint] _convert_python_sum_constraints(
-         subject_to=None, axes_subject_to=None) except *:
+        sum_subject_to=None, axes_sums_subject_to=None) except *:
     cdef vector[NumberNode.SumConstraint] output
     cdef optional[Py_ssize_t] cpp_axis = nullopt
     cdef vector[NumberNode.SumConstraint.Operator] cpp_ops
     cdef vector[double] cpp_bounds
     cdef double[:] mem
 
-    if subject_to is not None:
-        for constraint in subject_to:
+    if sum_subject_to is not None:
+        for constraint in sum_subject_to:
             if not isinstance(constraint, tuple) or len(constraint) != 2:
                 raise TypeError("A sum constraint on an entire number array must be"
                                 " a tuple with two elements: `operator` and `bound`")
@@ -75,8 +75,8 @@ cdef vector[NumberNode.SumConstraint] _convert_python_sum_constraints(
             cpp_bounds[0] = py_bounds
             output.push_back(NumberNode.SumConstraint(cpp_axis, move(cpp_ops), move(cpp_bounds)))
 
-    if axes_subject_to is not None:
-        for axis_constraint in axes_subject_to:
+    if axes_sums_subject_to is not None:
+        for axis_constraint in axes_sums_subject_to:
             if not isinstance(axis_constraint, tuple) or len(axis_constraint) != 3:
                 raise TypeError("Each axis sum constraint must be a tuple with "
                                 "three elements: axis, operator(s), bound(s)")
@@ -132,14 +132,15 @@ cdef class BinaryVariable(ArraySymbol):
         usage of this symbol.
     """
     def __init__(self, _Graph model, shape=None, lower_bound=None, upper_bound=None,
-                 subject_to=None, axes_subject_to=None):
+                 sum_subject_to=None, axes_sums_subject_to=None):
         cdef vector[Py_ssize_t] cppshape = as_cppshape(
             tuple() if shape is None else shape
         )
 
         cdef optional[vector[double]] cpplower_bound = nullopt
         cdef optional[vector[double]] cppupper_bound = nullopt
-        cdef vector[BinaryNode.SumConstraint] cpp_sum_constraints = _convert_python_sum_constraints(subject_to, axes_subject_to)
+        cdef vector[BinaryNode.SumConstraint] cpp_sum_constraints
+        cpp_sum_constraints = _convert_python_sum_constraints(sum_subject_to, axes_sums_subject_to)
         cdef const double[:] mem
 
         if lower_bound is not None:
@@ -214,27 +215,27 @@ cdef class BinaryVariable(ArraySymbol):
         try:
             info = zf.getinfo(directory + "sum_constraints.json")
         except KeyError:
-            subject_to = None
-            axes_subject_to = None
+            sum_subject_to = None
+            axes_sums_subject_to = None
         else:
             with zf.open(info, "r") as f:
-                subject_to = []
-                axes_subject_to = []
+                sum_subject_to = []
+                axes_sums_subject_to = []
                 # Note that import is a list of lists, not a list of tuples.
                 # Hence we convert to tuple. We could also support lists.
                 for item in json.load(f):
                     if len(item) == 2:
-                        # Inconvenient but `subject_to` expects scalars, not lists
-                        subject_to.append((item[0][0], item[1][0]))
+                        # Inconvenient but `sum_subject_to` expects scalars, not lists
+                        sum_subject_to.append((item[0][0], item[1][0]))
                     else:
-                        axes_subject_to.append(tuple(item))
+                        axes_sums_subject_to.append(tuple(item))
 
         return BinaryVariable(model,
                               shape=shape_info["shape"],
                               lower_bound=lower_bound,
                               upper_bound=upper_bound,
-                              subject_to=subject_to,
-                              axes_subject_to=axes_subject_to
+                              sum_subject_to=sum_subject_to,
+                              axes_sums_subject_to=axes_sums_subject_to
                               )
 
     def _into_zipfile(self, zf, directory):
@@ -359,14 +360,15 @@ cdef class IntegerVariable(ArraySymbol):
         usage of this symbol.
     """
     def __init__(self, _Graph model, shape=None, lower_bound=None, upper_bound=None,
-                 subject_to=None, axes_subject_to=None):
+                 sum_subject_to=None, axes_sums_subject_to=None):
         cdef vector[Py_ssize_t] cppshape = as_cppshape(
             tuple() if shape is None else shape
         )
 
         cdef optional[vector[double]] cpplower_bound = nullopt
         cdef optional[vector[double]] cppupper_bound = nullopt
-        cdef vector[IntegerNode.SumConstraint] cpp_sum_constraints = _convert_python_sum_constraints(subject_to, axes_subject_to)
+        cdef vector[IntegerNode.SumConstraint] cpp_sum_constraints 
+        cpp_sum_constraints = _convert_python_sum_constraints(sum_subject_to, axes_sums_subject_to)
         cdef const double[:] mem
 
         if lower_bound is not None:
@@ -441,27 +443,27 @@ cdef class IntegerVariable(ArraySymbol):
         try:
             info = zf.getinfo(directory + "sum_constraints.json")
         except KeyError:
-            subject_to = None
-            axes_subject_to = None
+            sum_subject_to = None
+            axes_sums_subject_to = None
         else:
             with zf.open(info, "r") as f:
-                subject_to = []
-                axes_subject_to = []
+                sum_subject_to = []
+                axes_sums_subject_to = []
                 # Note that import is a list of lists, not a list of tuples.
                 # Hence we convert to tuple. We could also support lists.
                 for item in json.load(f):
                     if len(item) == 2:
-                        # Inconvenient but `subject_to` expects scalars, not lists
-                        subject_to.append((item[0][0], item[1][0]))
+                        # Inconvenient but `sum_subject_to` expects scalars, not lists
+                        sum_subject_to.append((item[0][0], item[1][0]))
                     else:
-                        axes_subject_to.append(tuple(item))
+                        axes_sums_subject_to.append(tuple(item))
 
         return IntegerVariable(model,
                                shape=shape_info["shape"],
                                lower_bound=lower_bound,
                                upper_bound=upper_bound,
-                               subject_to=subject_to,
-                               axes_subject_to=axes_subject_to
+                               sum_subject_to=sum_subject_to,
+                               axes_sums_subject_to=axes_sums_subject_to
                                )
 
     def _into_zipfile(self, zf, directory):
