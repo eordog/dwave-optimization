@@ -258,6 +258,9 @@ cdef class _Graph:
         See also:
             :meth:`.into_file`, :meth:`.to_file`
 
+            :meth:`~dwave.optimization.states.States.from_file` Restores states
+            from a file
+
         .. versionchanged:: 0.6.0
             Add the ``substitute`` and ``lock`` keyword-only arguments.
 
@@ -407,6 +410,12 @@ cdef class _Graph:
             version:
                 A 2-tuple indicating which serialization version to use.
 
+        See also:
+            :meth:`.from_file`, :meth:`.to_file`
+
+            :meth:`~dwave.optimization.states.States.into_file` Saves states to
+            an existing file
+
         Format Specification (Version 1.0):
 
             This format is inspired by the `NPY format`_
@@ -469,9 +478,6 @@ cdef class _Graph:
         Format Specification (Version 0.1):
 
             Prior to version 1.0, states were saved differently.
-
-        See also:
-            :meth:`.from_file`, :meth:`.to_file`
 
         .. versionchanged:: 0.5.2
             Added the ``version`` keyword-only argument.

@@ -59,7 +59,7 @@ def locked(model: _Graph):
         variable, and prints a successor symbol.
 
         >>> from dwave.optimization import Model
-            ...
+        ...
         >>> model = Model()
         >>> i = model.integer(lower_bound=-5, upper_bound=5)
         >>> j = i**2
@@ -1062,6 +1062,9 @@ class Model(_Graph):
 
         See also:
             :meth:`.into_file`, :meth:`.from_file`
+
+            :meth:`~dwave.optimization.states.States.to_file` Saves states to a
+            file
         """
         file = tempfile.TemporaryFile(mode="w+b")
 
