@@ -59,7 +59,7 @@ def locked(model: _Graph):
         variable, and prints a successor symbol.
 
         >>> from dwave.optimization import Model
-            ...
+        ...
         >>> model = Model()
         >>> i = model.integer(lower_bound=-5, upper_bound=5)
         >>> j = i**2

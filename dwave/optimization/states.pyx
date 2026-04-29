@@ -339,7 +339,6 @@ cdef class States:
             ...     my_file = model.states.to_file()        # Save the states
             >>> my_file.seek(0)
             0
-            ...
             >>> with model.lock():                          # Change a state
             ...     model.states.resize(2)
             ...     i.set_state(0, [-10, -5, 0, 5, 10])
