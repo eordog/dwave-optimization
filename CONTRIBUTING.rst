@@ -1,3 +1,4 @@
+============
 Contributing
 ============
 
@@ -8,7 +9,7 @@ has guidelines for contributing to Ocean packages.
 `.clang-format <.clang-format>`_ and `setup.cfg <setup.cfg>`_ files.
 
 Release Notes
--------------
+=============
 
 ``dwave-optimization`` makes use of `reno <https://docs.openstack.org/reno/>`_
 to manage its release notes.
