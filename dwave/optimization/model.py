@@ -234,8 +234,8 @@ class Model(_Graph):
     def binary(self, shape: None | _ShapeLike = None,
                lower_bound: None | np.typing.ArrayLike = None,
                upper_bound: None | np.typing.ArrayLike = None,
-               subject_to: None | list[tuple[str, float]] = None,
-               axes_subject_to: None | list[tuple[int, str | list[str], float | list[float]]] = None
+               sum_subject_to: None | list[tuple[str, float]] = None,
+               axes_sums_subject_to: None | list[tuple[int, str | list[str], float | list[float]]] = None
                ) -> BinaryVariable:
         r"""Add a binary decision variable to the model.
 
@@ -254,7 +254,7 @@ class Model(_Graph):
                 scalar (one bound for all variables) or an array (one bound for
                 each variable). Non-Boolean values are rounded down to the domain
                 [0,1]. If None, the default value of 1 is used.
-            subject_to (optional): Constraint on the sum of the values in the
+            sum_subject_to (optional): Constraint on the sum of the values in the
                 array. Must be an array of tuples where each tuple has the form:
                 (operator, bound).
                 - operator (str): The constraint operator ("<=", "==", or ">=").
@@ -262,8 +262,8 @@ class Model(_Graph):
                 If provided, the sum of values within the array must satisfy
                 the corresponding operator–bound pair.
                 Note 1: At most one sum constraint may be provided.
-                Note 2: If provided, axes_subject_to must None.
-            axes_subject_to (optional): Constraint on the sum of the values in
+                Note 2: If provided, axes_sums_subject_to must None.
+            axes_sums_subject_to (optional): Constraint on the sum of the values in
                 each slice along a fixed axis in the array. Must be an array of
                 tuples where each tuple has the form: (axis, operator(s), bound(s)).
                 - axis (int): The axis that the constraint is applied to.
@@ -276,7 +276,7 @@ class Model(_Graph):
                 If provided, the sum of values within each slice along the
                 specified axis must satisfy the corresponding operator–bound pair.
                 Note 1: At most one sum constraint may be provided.
-                Note 2: If provided, subject_to must None.
+                Note 2: If provided, sum_subject_to must None.
 
         Returns:
             A binary symbol at the root of the :term:`directed acyclic graph`
@@ -312,7 +312,7 @@ class Model(_Graph):
             >>> import numpy as np
             >>> model = Model()
             >>> b = model.binary([2, 3], lower_bound=[[0, 1, 1], [0, 1, 0]],
-            ... axes_subject_to=[(1, ["<=", "==", ">="], [0, 2, 1])])
+            ... axes_sums_subject_to=[(1, ["<=", "==", ">="], [0, 2, 1])])
             >>> np.all(b.sum_constraints() == [(1, ["<=", "==", ">="], [0, 2, 1])])
             True
 
@@ -322,7 +322,7 @@ class Model(_Graph):
             >>> from dwave.optimization.model import Model
             >>> import numpy as np
             >>> model = Model()
-            >>> b = model.binary(6, subject_to=[("==", 2)])
+            >>> b = model.binary(6, sum_subject_to=[("==", 2)])
             >>> np.all(b.sum_constraints() == [(["=="], [2])])
             True
 
@@ -343,7 +343,7 @@ class Model(_Graph):
             supported.
         """
         from dwave.optimization.symbols import BinaryVariable  # avoid circular import
-        return BinaryVariable(self, shape, lower_bound, upper_bound, subject_to, axes_subject_to)
+        return BinaryVariable(self, shape, lower_bound, upper_bound, sum_subject_to, axes_sums_subject_to)
 
     def constant(self, array_like: numpy.typing.ArrayLike) -> Constant:
         r"""Add a constant to the model.
@@ -706,8 +706,8 @@ class Model(_Graph):
             shape: None | _ShapeLike = None,
             lower_bound: None | numpy.typing.ArrayLike = None,
             upper_bound: None | numpy.typing.ArrayLike = None,
-            subject_to: None | list[tuple[str, float]] = None,
-            axes_subject_to: None | list[tuple[int, str | list[str], float | list[float]]] = None
+            sum_subject_to: None | list[tuple[str, float]] = None,
+            axes_sums_subject_to: None | list[tuple[int, str | list[str], float | list[float]]] = None
                ) -> IntegerVariable:
         r"""Add an integer decision variable to the model.
 
@@ -726,7 +726,7 @@ class Model(_Graph):
                 scalar (one bound for all variables) or an array (one bound for
                 each variable). Non-integer values are down up. If None, the
                 default value is used.
-            subject_to (optional): Constraint on the sum of the values in the
+            sum_subject_to (optional): Constraint on the sum of the values in the
                 array. Must be an array of tuples where each tuple has the form:
                 (operator, bound).
                 - operator (str): The constraint operator ("<=", "==", or ">=").
@@ -734,8 +734,8 @@ class Model(_Graph):
                 If provided, the sum of values within the array must satisfy
                 the corresponding operator–bound pair.
                 Note 1: At most one sum constraint may be provided.
-                Note 2: If provided, axes_subject_to must None.
-            axes_subject_to (optional): Constraint on the sum of the values in
+                Note 2: If provided, axes_sums_subject_to must None.
+            axes_sums_subject_to (optional): Constraint on the sum of the values in
                 each slice along a fixed axis in the array. Must be an array of
                 tuples where each tuple has the form: (axis, operator(s), bound(s)).
                 - axis (int): The axis that the constraint is applied to.
@@ -748,7 +748,7 @@ class Model(_Graph):
                 If provided, the sum of values within each slice along the
                 specified axis must satisfy the corresponding operator–bound pair.
                 Note 1: At most one sum constraint may be provided.
-                Note 2: If provided, subject_to must None.
+                Note 2: If provided, sum_subject_to must None.
         Returns:
             An integer symbol at the root of the :term:`directed acyclic graph`
             for the model.
@@ -793,7 +793,7 @@ class Model(_Graph):
             >>> import numpy as np
             >>> model = Model()
             >>> i = model.integer([2, 3], lower_bound=1, upper_bound=3,
-            ... axes_subject_to=[(1, "<=", [2, 4, 5])])
+            ... axes_sums_subject_to=[(1, "<=", [2, 4, 5])])
             >>> np.all(i.sum_constraints() == [(1, ["<="], [2, 4, 5])])
             True
 
@@ -804,7 +804,7 @@ class Model(_Graph):
             >>> from dwave.optimization.model import Model
             >>> import numpy as np
             >>> model = Model()
-            >>> i = model.integer(6, subject_to=[("<=", 20)])
+            >>> i = model.integer(6, sum_subject_to=[("<=", 20)])
             >>> np.all(i.sum_constraints() == [(["<="], [20])])
             True
 
@@ -825,7 +825,7 @@ class Model(_Graph):
             supported.
         """
         from dwave.optimization.symbols import IntegerVariable  # avoid circular import
-        return IntegerVariable(self, shape, lower_bound, upper_bound, subject_to, axes_subject_to)
+        return IntegerVariable(self, shape, lower_bound, upper_bound, sum_subject_to, axes_sums_subject_to)
 
     def list(self,
             n: int,
