@@ -7,7 +7,7 @@
 .. image:: https://circleci.com/gh/dwavesystems/dwave-optimization.svg?style=svg
     :target: https://circleci.com/gh/dwavesystems/dwave-optimization
 
-.. image:: https://github.com/arcondello/dwave-optimization/blob/README-refresh/docs/_images/optimization_stride_logo_blue_light_dark.svg
+.. image:: https://raw.githubusercontent.com/dwavesystems/dwave-optimization/main/docs/_images/optimization_stride_logo_blue_light_dark.svg
     :class: only-light
     :target: https://docs.dwavequantum.com/en/latest/industrial_optimization/index.html
     :width: 225
@@ -22,7 +22,7 @@ Models are constructed symbolically using an array-based syntax inspired by NumP
 The package includes:
 
 *   A class for nonlinear models used by the Stride quantum-classical
-    hybrid nonlinear-program solver.
+    hybrid nonlinear solver.
 *   Model generators for common optimization problems.
 
 .. end_optimization_about
@@ -32,16 +32,17 @@ Example Usage
 
 .. start_optimization_examples
 
-The `quadratic assignment problem <https://w.wiki/HhHL>`_ problem is a famous
-combinatorial optimization problem.
-There are ``n`` facilities and ``n`` potential locations, a *flow* between each pair
-of facilities, and a *distance* between each pair of locations.
+The `quadratic assignment problem <https://w.wiki/HhHL>`_ problem is a combinatorial
+optimization problem.
+There are ``n`` facilities and ``n`` potential locations, a flow between each pair
+of facilities, and a distance between each pair of locations.
 The problem is to assign each facility to a location in order to minimize the
 sum of each distance multiplied by each matching flow.
 
 This small example builds a quadratic assignment using *dwave-optimization*
 symbols. There is also a
-`generator <https://docs.dwavequantum.com/en/latest/ocean/api_ref_optimization/generators.html>`_.
+`generator <https://docs.dwavequantum.com/en/latest/ocean/api_ref_optimization/generators.html>`_
+for this problem.
 
 .. code-block:: python
 
